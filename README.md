@@ -1,4 +1,4 @@
-# my-message-channel-pipe-and-filters-sample
+# my-message-channel-pipes-and-filters-sample
 
 Project description.
 
