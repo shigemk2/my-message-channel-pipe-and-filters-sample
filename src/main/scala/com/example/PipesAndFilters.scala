@@ -5,7 +5,7 @@ import com.example._
 
 case class ProcessIncomingOrder(orderInfo: Array[Byte])
 
-object PipeAndFiltersDriver extends CompletableApp(9) {
+object PipesAndFiltersDriver extends CompletableApp(9) {
 }
 
 class Authenticator(nextFilter: ActorRef) extends Actor {
@@ -15,7 +15,7 @@ class Authenticator(nextFilter: ActorRef) extends Actor {
       println(s"Authenticator: processing $text")
       val orderText = text.replace("(certificate)", "")
       nextFilter ! ProcessIncomingOrder(orderText.toCharArray.map(_.toByte))
-      PipeAndFiltersDriver.completedStep()
+      PipesAndFiltersDriver.completedStep()
   }
 }
 
@@ -26,7 +26,7 @@ class Decrypter(nextFilter: ActorRef) extends Actor {
       println(s"Decrypter: processing $text")
       val orderText = text.replace("(encryption)", "")
       nextFilter ! ProcessIncomingOrder(orderText.toCharArray.map(_.toByte))
-      PipeAndFiltersDriver.completedStep()
+      PipesAndFiltersDriver.completedStep()
   }
 }
 
@@ -49,7 +49,7 @@ class Deduplicator(nextFilter: ActorRef) extends Actor {
       } else {
         println(s"Deduplicator: found duplicate order $orderId")
       }
-      PipeAndFiltersDriver.completedStep()
+      PipesAndFiltersDriver.completedStep()
   }
 }
 
@@ -60,7 +60,7 @@ class OrderAcceptanceEndpoint(nextFilter: ActorRef) extends Actor {
       println(s"OrderAcceptanceEndpoint: processing $text")
       val orderText = text.replace("(encryption)", "")
       nextFilter ! ProcessIncomingOrder(orderText.toCharArray.map(_.toByte))
-      PipeAndFiltersDriver.completedStep()
+      PipesAndFiltersDriver.completedStep()
   }
 }
 
@@ -69,6 +69,6 @@ class OrderManagementSystem extends Actor {
     case message: ProcessIncomingOrder =>
       val text = new String(message.orderInfo)
       println(s"OrderManagementSystem: processing unique order: $text")
-      PipeAndFiltersDriver.completedStep()
+      PipesAndFiltersDriver.completedStep()
   }
 }

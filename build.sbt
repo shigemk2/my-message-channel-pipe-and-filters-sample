@@ -1,4 +1,4 @@
-name := "my-message-channel-pipe-and-filters-sample"
+name := "my-message-channel-pipes-and-filters-sample"
 
 organization := "com.example"
 
