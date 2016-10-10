@@ -6,7 +6,7 @@ import com.example._
 case class ProcessIncomingOrder(orderInfo: Array[Byte])
 
 object PipesAndFiltersDriver extends CompletableApp(9) {
-  val orderText = "(encryption)(certificate)<order id '123'>...</order>"
+  val orderText = "(encryption)(certificate)<order id='123'>...</order>"
   val rawOrderBytes = orderText.toCharArray.map(_.toByte)
 
   val filter5 = system.actorOf(Props[OrderManagementSystem], "orderManagementSystem")
@@ -70,11 +70,10 @@ class Deduplicator(nextFilter: ActorRef) extends Actor {
 
 class OrderAcceptanceEndpoint(nextFilter: ActorRef) extends Actor {
   def receive = {
-    case message: ProcessIncomingOrder =>
-      val text = new String(message.orderInfo)
+    case rawOrder: Array[Byte] =>
+      val text = new String(rawOrder)
       println(s"OrderAcceptanceEndpoint: processing $text")
-      val orderText = text.replace("(encryption)", "")
-      nextFilter ! ProcessIncomingOrder(orderText.toCharArray.map(_.toByte))
+      nextFilter ! ProcessIncomingOrder(rawOrder)
       PipesAndFiltersDriver.completedStep()
   }
 }
